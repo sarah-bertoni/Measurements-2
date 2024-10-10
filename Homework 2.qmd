@@ -1,0 +1,238 @@
+---
+title: "Homework 2"
+format: pdf
+  mainfont: Garamound
+editor: visual
+---
+
+## 1 Child Mortality in Cote d'Ivoire
+
+```{r}
+## Libraries
+library(haven)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(tidyr)
+library(Amelia)
+library(sandwich)
+library(lmtest)
+library(miceadds)
+library(huxtable)
+library(matrixStats)
+library(float)
+
+```
+
+```{r}
+mortality <- read_dta("civ88_mort.dta")
+nutri <- read_dta("civ88-08_nutri.dta")
+sum(is.na(mortality)) #=0
+sum(is.na(nutri)) #=12474
+
+```
+
+### 1.1. Sampling
+
+```{r}
+mortality <- mortality %>% mutate(weight = (pweight*n_wom))
+
+```
+
+### 1.2. Measurement of under 5 mortality
+
+Either take the population of children born 0 to 4 years ago and divide the number of deaths by the number of children
+
+**b.1.) First Method**
+
+```{r}
+## make prettier tables
+## Compute the average
+# Boys
+summary(lm(data = mortality, formula = dboys_l5/boys_l5 ~ 1, weights = weight))
+# Girls
+summary(lm(data = mortality, formula = dgirls_l5/girls_l5 ~ 1, weights = weight))
+
+```
+
+Or take the population of children born 5 to 9 years ago and divide the number of deaths between 0 and 4 years of age (i.e. before reaching age 5) by the number of children.
+
+**b.2.) Second Method**
+
+```{r}
+## Numer of children born 5 to 9 years ago
+mortality <- mortality %>%  mutate(boys_5_9= boys - boys_l5)
+mortality <- mortality %>% mutate(girls_5_9 = girls - girls_l5)
+
+## Number of children dead before age of five born between 0 and 5 years ago
+mortality <- mortality <- mortality %>%  mutate(dboyl9 = dboys_u5 - dboys_l5 )
+mortality <- mortality <- mortality %>%  mutate(dgirlsl9 = dgirls_u5 - dgirls_l5 )
+
+## Weighted average
+# Boys = 0.120314
+summary(lm(data = mortality, formula = dboyl9/boys_5_9 ~ 1, weights = weight, na.rm=T))
+# Girls = 0.116958
+summary(lm(data = mortality, formula = dgirlsl9/girls_5_9 ~ 1, weights = weight, na.rm=T))
+
+### Compare SE
+```
+
+## 2. Health status, nutritional status and wealth in Cote d'Ivoire
+
+```{r}
+civ88_08_nutri <- read_dta("civ88-08_nutri.dta")
+nutri <- civ88_08_nutri
+kable(summary(nutri$year))
+```
+
+### 2.1. Units
+
+In 2008, the weight could be measured in either kilograms or hectograms. However, the unit was not systematically reported. It was therefore assumed that all the weights were reported in kilograms.
+
+**a) Sample mean**
+
+Derive an expression for the sample mean weight in this context, and show that, if we knew just one parameter, we could obtain a non-biased estimate of the mean weight despite the hectogram issue. (.5 point)
+
+$\bar x = \frac{\sum x_\text{i hect}*0.01 + \sum x_\text{i kg}} {\sum n}$
+
+```{r}
+par(mfrow=c(1,3))
+weight2008<- nutri %>% filter(year==2008) %>% select(weightkg)
+ ggplot(weight2008, aes(weightkg)) + geom_histogram(col="darkblue", fill="blue") + theme_classic()
+ 
+ weight1988<- nutri %>% filter(year==1988) %>% select(weightkg)
+ ggplot(weight1988, aes(weightkg)) + geom_histogram(col="darkblue", fill="darkgreen") + theme_classic()
+ 
+ weight1993<- nutri %>% filter(year==1993) %>% select(weightkg)
+ggplot(weight1993, aes(weightkg)) + geom_histogram(col="darkblue", fill="purple") + theme_classic()
+```
+
+nutri %\>% filter(year==1993) %\>% select(weightkg)
+
+ggplot(weight1993, aes(weightkg)) + geom_histogram(aes(y=..density..), \# Histogram with density instead of count on y-axis
+
+binwidth=.5,
+
+colour="black", fill="white") +
+
+geom_density(alpha=.2, fill="#FF6666")
+
+```{r}
+nutri %>% filter(year==2008) %>% select(weightkg)
+ ggplot(weight2008, aes(weightkg)) +  geom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
+                   binwidth=.5,
+                   colour="black", fill="white") +
+    geom_density(alpha=.2, fill="#FF6666") +
+    geom_vline(aes(xintercept=mean(weightkg, na.rm=T)),   # Ignore NA values for mean
+               color="red", linetype="dashed", size=1)
+ 
+nutri %>% filter(year==1988) %>% select(weightkg)
+ ggplot(weight1988, aes(weightkg)) + ggeom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
+                   binwidth=.5,
+                   colour="black", fill="white") +
+    geom_density(alpha=.2, fill="#FF6666")
+ 
+nutri %>% filter(year==1993) %>% select(weightkg)
+ ggplot(weight1988, aes(weightkg)) + ggeom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
+                   binwidth=.5,
+                   colour="black", fill="white") +
+    geom_density(alpha=.2, fill="#FF6666")
+```
+
+I think we can make them even prettier <http://www.cookbook-r.com/Graphs/Plotting_distributions_(ggplot2)/>
+
+**b) Abnormal values**
+
+```{r}
+kable(nutri %>% summary(age))
+nutri %>% max(age) ##= 60 months = 5 years
+## weights higher than 30kg -> switch to kg
+nutri <- nutri %>% mutate(weightkg= ifelse(weightkg > 30, weightkg*0.1, weightkg*1))
+
+## weights lower than 1 kg and higher than 30 kg return NA
+nutri <- nutri %>% mutate(weightkg= ifelse(weightkg > 30 | weightkg<1, NA, weightkg*1))
+```
+
+**Graphical representation**
+
+```{r}
+par(mfrow=c(1,3))
+weight2008<- nutri %>% filter(year==2008) %>% select(weightkg)
+ ggplot(weight2008, aes(weightkg)) + geom_histogram(col="darkblue", fill="blue") + theme_classic()
+ 
+ weight1988<- nutri %>% filter(year==1988) %>% select(weightkg)
+ ggplot(weight1988, aes(weightkg)) + geom_histogram(col="darkblue", fill="darkgreen") + theme_classic()
+ 
+ weight1993<- nutri %>% filter(year==1993) %>% select(weightkg)
+ggplot(weight1993, aes(weightkg)) + geom_histogram(col="darkblue", fill="purple") + theme_classic()
+```
+
+WE could do this for age groups since some weights do make sense in absolute terms but not when compared with the respective age.
+
+### 2.2. Z Scores
+
+Using the variables medheight and stdheight, compute each child's z-score.
+
+$z = \frac {height - WHOMedian (sex, age)} {WHOstddev (sex,age)}$
+
+```{r}
+nutri2 <- nutri %>% mutate(zscore= (height- medheight)/stdheight)
+summary(nutri2$zscore)
+```
+
+```{r}
+ggplot(nutri2, aes(x = zscore)) +
+  geom_histogram(binwidth = 0.5, fill = "pink", color = "black") +
+  ggtitle("Histogram zscore") +
+  xlab("zscore") +
+  xlim(-5, 5)  +
+    geom_density(alpha=.2, fill="#FF6666") + theme_bw()
+
+```
+
+### 3. Height Stature over time and across regions
+
+*(a) Estimate the stunting rate for 2--4 years old children over time in the North, in the South, and at the national level. Decide what are outliers, and show results both including and excluding outliers. Comment your results.*
+
+```{r}
+## stunting rate
+nutri2 <- nutri2 %>% mutate(stunned = ifelse(zscore <= -2, 1, 0))
+##!! children 2-4 south, north national level
+
+## outliers
+nutri3 <- nutri2  %>% mutate(zscore = ifelse(zscore <= -3| zscore > 3, NA, zscore
+)) %>% mutate(stunned = ifelse(zscore <= -2, 1, 0))
+summary(nutri3$zscore)
+
+## recalculate rates
+nutri2 %>% filter(year==2008)%>%   filter(!is.na(stunned)) %>% 
+  filter(age > 24 & age < 48)  %>%  summarize(obs=n(),prop=sum(stunned==1)/n())
+  
+nutri2 %>% filter(year==1988)%>%   filter(!is.na(stunned)) %>% 
+  filter(age > 24 & age < 48) %>%  summarize(obs=n(),prop=sum(stunned==1)/n())
+
+nutri2 %>% filter(year==1993)%>%
+  filter(age > 24 & age < 48) %>%   filter(!is.na(stunned)) %>%  summarize(obs=n(),prop=sum(stunned==1)/n())
+
+## or
+prop <- nutri2 %>% sum(nutri2$stunned==1)/sum(nutri2)
+nutri2 %>%  filter(!is.na(stunned)) %>% (lm(data=nutri2, formula= prop ~ 1))
+## does not work
+```
+
+*(b) Estimate the stunting rate for 2--4 years old children over time for boys and for girls at the national
+level. Decide what are outliers, and show results both including and excluding outliers. Comment your results.*
+
+**4. Height Stature and poverty (2 points)**
+Here, one would like to study how the gradient of the number of stunted children aged 2--4 years, and of household consumption per capita, as well as the relationship between the two, have changed over time.
+Find a graphical or regression framework to represent this (many options are possible). Comment on your results and their limits.
+
+-   regression between stunted children, consumption per capita in different years
+
+-   graphs on evolution of both
+
+-   plotting regression
+
+**5. Immigration**
+
+Crime rate and immigration?
