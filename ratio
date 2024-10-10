@@ -1,0 +1,5 @@
+##Compute the average
+
+summary(lm(data = mortality, formula = dboys_l5/boys_l5 ~ 1, weights = pweight))
+#Girls
+summary(lm(data = mortality, formula = dgirls_l5/girls_l5 ~ 1, weights = pweight))
