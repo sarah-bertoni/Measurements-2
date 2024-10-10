@@ -30,6 +30,41 @@ nutri <- read_dta("civ88-08_nutri.dta")
 sum(is.na(mortality)) #=0
 sum(is.na(nutri)) #=12474
 
+missing_df<-as.data.frame((missingvalues))
+missing_df%>%
+  filter(missing_df!=0)%>%
+  kable(caption = "Number of missing values per variable",
+        col.names=c("Variables", "Missing values"))%>%
+  kable_classic()
+
+#Are the missing values random?
+dummies<-nutri%>%
+  select(pweight, rur, height, weightkg, agehead)%>%
+  mutate(dpweight=ifelse(is.na(pweight),1,0),
+         drur=ifelse(is.na(rur),1,0), 
+         dheight=ifelse(is.na(height),1,0),
+         dweightkg=ifelse(is.na(weightkg),1,0),
+         dagehead=ifelse(is.na(agehead),1,0))
+
+
+independence_test<-list(
+  t.test(dummies$dpweight, nutri$pweight),
+  t.test(dummies$drur, nutri$rur),
+  t.test(dummies$dheight, nutri$height),
+  t.test(dummies$dweightkg, nutri$weightkg),
+  t.test(dummies$dagehead, nutri$agehead))
+
+p_values<-sapply(independence_test, function(x) x$p.value)
+
+independence_test_df<-data.frame(
+  Test=c("pweight", "rur", "height", "weightkg", "agehead"),
+  P_Value = p_values)
+
+independence_test_df%>%
+mutate(Independence=ifelse(P_Value>0.10, "Independent", "Not independent"))%>%
+kable(caption="Results of the independence tests on the presence of missing
+values")
+
 ```
 
 ### 1.1. Sampling
@@ -236,3 +271,5 @@ Find a graphical or regression framework to represent this (many options are pos
 **5. Immigration**
 
 Crime rate and immigration?
+See if current legal immigration to European countries is coming more from previous colonies (too many omitted variables). 
+Link between immigration and far-right prevalence. 
