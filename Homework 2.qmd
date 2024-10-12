@@ -109,6 +109,31 @@ summary(lm(data = mortality, formula = dboyl9/boys_5_9 ~ 1, weights = weight, na
 # Girls = 0.116958
 summary(lm(data = mortality, formula = dgirlsl9/girls_5_9 ~ 1, weights = weight, na.rm=T))
 
+##Tables (kind of obvious that it was done w Chatgpt, feel free to change if you have better ideas!
+extract <- function(x) {
+  coef <- coef(summary(x))[1, 1]
+  se <- coef(summary(x))[1, 2]
+  return(c(mean = coef, se = se))
+}
+
+m1_gstats<-extract(m1_g)
+m1_bstats<-extract(m1_b)
+m2_gstats<-extract(m2_g)
+m2_bstats<-extract(m2_b)
+
+m1_g <- paste0(round(m1_gstats["mean"], 3), " (", round(m1_gstats["se"], 3), ")")
+m1_b <- paste0(round(m1_bstats["mean"], 3), " (", round(m1_bstats["se"], 3), ")")
+m2_g <- paste0(round(m2_gstats["mean"], 3), " (", round(m2_gstats["se"], 3), ")")
+m2_b <- paste0(round(m2_bstats["mean"], 3), " (", round(m2_bstats["se"], 3), ")")
+
+child_mort<-data.frame(
+  "Method 1: Based on children born 0 to 4 years ago" = c(m1_g, m1_b), 
+  "Method 2: Based on children born 5 to 9 years ago" = c(m2_g, 
+                                                          m2_b),
+  row.names = c("Girls", "Boys"))
+
+kable(child_mort, caption = "Under-5 mortality rates in Côte d'Ivoire")
+
 ### Compare SE
 ```
 
