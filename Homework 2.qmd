@@ -45,6 +45,20 @@ dummies<-nutri%>%
 
 heightmv<-lm(nutri$conspc88~dummies$dummyheight)
 weightmv<-lm(nutri$conspc88~dummies$dummyweightkg)
+
+indepheight<-huxreg("Regression of height on variables of the dataset"= 
+                      lm(nutri$height ~ nutri$hhid + nutri$hhsize + nutri$north + nutri$age + nutri$sexe + nutri$education + nutri$medheight + nutri$conspc88, data=nutri))
+
+indepheight
+
+indepweight<-huxreg("Regression of weight on variables of the dataset"= 
+                      lm(nutri$weightkg ~ nutri$hhid + nutri$hhsize + nutri$north + nutri$age + nutri$sexe + nutri$education + nutri$medheight + nutri$conspc88, data=nutri))
+
+indepweight
+
+newnutri<-nutri%>%
+  mutate(height=ifelse(is.na(height)==T, 0.952*medheight, height), 
+         weightkg=ifelse(is.na(weightkg)==T, 50.467-0.330*hhsize+0.456*age+10.388*education-0.388*medheight, weightkg))
 ```
 
 ### 1.1. Sampling
