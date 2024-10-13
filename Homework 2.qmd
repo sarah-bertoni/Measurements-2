@@ -197,22 +197,25 @@ I think we can make them even prettier <http://www.cookbook-r.com/Graphs/Plottin
 
 **b) Abnormal values**
 
+[Weights for age from the WHO website](https://www.who.int/tools/child-growth-standards/standards/weight-for-age)
+
 ```{r}
 ages<-c("0 to 1 y.o.", "1 to 2 y.o.", "2 to 3 y.o.", "3 to 5 y.o.")
-threshw<-c("2 to 9.6 kg", "6.5 to 12.5 kg", "8.8 to 14.9 kg", "10.8 to 18.1 kg")
+threshw<-c("up to 12 kg", "up to 15 kg", "up to 18 kg", "up to 24.5 kg")
 thresholds<-data.frame("Age" = ages, "Normal weights" = threshw)
-kable(thresholds, caption="Expected weights of children in West Africa")
+kable(thresholds, caption="Expected weights of children from birth to 5 years
+      old in the world")
 
 
 nutri_kg <- nutri %>%
   mutate(weightkg = case_when(
-    year == "2008" & age <= 12 & weightkg > 9.6 ~ weightkg * 0.1,
+    year == "2008" & age <= 12 & weightkg > 12 ~ weightkg * 0.1,
     year == "2008" & age <= 12 ~ weightkg,
-    year == "2008" & age > 12 & age <= 24 & weightkg > 12.5 ~ weightkg * 0.1,
+    year == "2008" & age > 12 & age <= 24 & weightkg > 15 ~ weightkg * 0.1,
     year == "2008" & age > 12 & age <= 24 ~ weightkg,
-    year == "2008" & age > 24 & age <= 36 & weightkg > 14.9 ~ weightkg * 0.1,
+    year == "2008" & age > 24 & age <= 36 & weightkg > 18 ~ weightkg * 0.1,
     year == "2008" & age > 24 & age <= 36 ~ weightkg,
-    year == "2008" & age > 36 & weightkg > 18.1 ~ weightkg * 0.1,
+    year == "2008" & age > 36 & weightkg > 24.5 ~ weightkg * 0.1,
     year == "2008" & age > 36 ~ weightkg,
     TRUE ~ weightkg
   ))
