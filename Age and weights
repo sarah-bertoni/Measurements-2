@@ -1,0 +1,22 @@
+ages<-c("0 to 1 y.o.", "1 to 2 y.o.", "2 to 3 y.o.", "3 to 5 y.o.")
+threshw<-c("up to 12 kg", "up to 15 kg", "up to 18 kg", "up to 24.5 kg")
+thresholds<-data.frame("Age" = ages, "Normal weights" = threshw)
+kable(thresholds, caption="Expected weights of children from birth to 5 years
+      old in the world" , col.names = c("Age Range", "Weight range")) %>%  
+  kable_paper("hover", full_width = F, html_font = "Cambria") %>% kable_styling(bootstrap_options = c("striped", "hover"),  position = "float_left")
+
+nutri <- nutri %>%
+  mutate(weightkg = case_when(
+    year == "2008" & age <= 12 & weightkg > 12 ~ weightkg * 0.1,
+    year == "2008" & age <= 12 ~ weightkg,
+    year == "2008" & age > 12 & age <= 24 & weightkg > 15 ~ weightkg * 0.1,
+    year == "2008" & age > 12 & age <= 24 ~ weightkg,
+    year == "2008" & age > 24 & age <= 36 & weightkg > 18 ~ weightkg * 0.1,
+    year == "2008" & age > 24 & age <= 36 ~ weightkg,
+    year == "2008" & age > 36 & weightkg > 24.5 ~ weightkg * 0.1,
+    year == "2008" & age > 36 ~ weightkg,
+    TRUE ~ weightkg))
+ 
+## weights lower than 1 kg and higher than 30 kg return NA
+
+nutri <- nutri %>% mutate(weightkg= ifelse(weightkg > 30 | weightkg<1.5, NA, weightkg*1))
