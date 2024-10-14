@@ -1,0 +1,17 @@
+# Name: Cedric Fontaine #
+
+# Clears the log space and saved datasets #
+
+cat("\f")
+rm(list = ls())
+
+library(tidyverse)
+library(haven)
+library(readxl)
+
+data <- read_excel("final.xlsx")
+
+
+model2 <- lm(data=data, log(People+1)~is_french_colony+ `Population, total` + `Age dependency ratio, young`+as.factor(Year))
+
+summary(model2)
