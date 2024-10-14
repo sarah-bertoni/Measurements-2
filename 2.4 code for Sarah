@@ -1,0 +1,25 @@
+2.4 code for Sarah
+
+```{r}
+nutri2 <- nutri2 %>%
+  mutate(yearcat = case_when(
+    year == 1988 ~ 1,
+    year == 1993 ~ 2,
+    year == 2008 ~ 3
+  )) %>%
+  mutate(constunt = conspc88 * stunted)
+
+model <- nutri2 %>%
+  lm(stunted ~ yearcat, data = .)
+
+model2 <- nutri2 %>%
+  lm(conspc88 ~ yearcat, data = .)
+
+model3 <- nutri2 %>%
+  lm(constunt ~ yearcat, data = .)
+
+
+print(model)
+print(model2)
+print(model3)
+```
