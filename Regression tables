@@ -1,0 +1,26 @@
+outreg1 <- huxtable::huxreg(summary(model), error_format = "({std.error})",
+                 error_pos = "below",
+                 statistics = c(N = "nobs", R2 = "r.squared"), 
+                 stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
+                 note = "{stars}",
+                 align = "center") %>%
+  set_caption("Regression output for stunting rate over the years")
+set_latex_float(outreg1, value = "H")
+
+outreg2 <- huxtable::huxreg(summary(model2), error_format = "({std.error})",
+                 error_pos = "below",
+                 statistics = c(N = "nobs", R2 = "r.squared"), 
+                 stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
+                 note = "{stars}",
+                 align = "center") %>%
+  set_caption("Regression output for consumption over the years")
+set_latex_float(outreg1, value = "H")
+
+outreg3 <- huxtable::huxreg(summary(model3), error_format = "({std.error})",
+                 error_pos = "below",
+                 statistics = c(N = "nobs", R2 = "r.squared"), 
+                 stars = c(`***` = 0.01, `**` = 0.05, `*` = 0.1),
+                 note = "{stars}",
+                 align = "center") %>%
+  set_caption("Regression output for consumption and stunting rate")
+set_latex_float(outreg3, value = "H")
