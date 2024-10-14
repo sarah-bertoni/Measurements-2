@@ -4,210 +4,177 @@ library(knitr)
 
 #over time: for 1988, 1993 and 2008
 
+
+nutri_clean1 <- nutri[!is.na(nutri$zscore), ]
+nutri_clean1 <- nutri_clean1[!is.na(nutri_clean1$pweight), ]
+nutri_clean1$dummy_zscore <- ifelse(nutri_clean1$zscore <= -2, 1, 0)
+
 #national level#
 
-nat_stunting_rate_1988 <- nutri %>%
+nat_stunting_rate_1988 <- nutri_clean1 %>%
   filter(year == 1988) %>% 
   filter(age > 24 & age < 48) %>% 
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
-nat_stunting_rate_1993 <- nutri %>%
+nat_stunting_rate_1993 <- nutri_clean1 %>%
   filter(year == 1993) %>% 
   filter(age > 24 & age < 48) %>% 
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
-nat_stunting_rate_1993 <- nutri %>%
+nat_stunting_rate_1993 <- nutri_clean1 %>%
   filter(year == 1993) %>% 
   filter(age > 24 & age < 48) %>% 
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
-nat_stunting_rate_2008 <- nutri %>%
+nat_stunting_rate_2008 <- nutri_clean1 %>%
   filter(year == 2008) %>% 
   filter(age > 24 & age < 48) %>% 
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
 #northern region#
 
 
-north_stunting_rate_1988 <- nutri %>%
+north_stunting_rate_1988 <- nutri_clean1 %>%
   filter(year == 1988) %>% 
   filter(age > 24 & age < 48) %>% 
   filter(north == 1)%>%
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
-north_stunting_rate_1993 <- nutri %>%
+north_stunting_rate_1993 <- nutri_clean1 %>%
   filter(year == 1993) %>% 
   filter(age > 24 & age < 48) %>% 
   filter(north == 1)%>%
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
-north_stunting_rate_2008 <- nutri %>%
+north_stunting_rate_2008 <- nutri_clean1 %>%
   filter(year == 2008) %>% 
   filter(age > 24 & age < 48) %>% 
   filter(north == 1)%>%
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
 #southern region
 
-south_stunting_rate_1988 <- nutri %>%
+south_stunting_rate_1988 <- nutri_clean1 %>%
   filter(year == 1988) %>% 
   filter(age > 24 & age < 48) %>% 
   filter(north == 0)%>%
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
-south_stunting_rate_1993 <- nutri %>%
+south_stunting_rate_1993 <- nutri_clean1 %>%
   filter(year == 1993) %>% 
   filter(age > 24 & age < 48) %>% 
   filter(north == 0)%>%
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
-south_stunting_rate_2008 <- nutri %>%
+south_stunting_rate_2008 <- nutri_clean1 %>%
   filter(year == 2008) %>% 
   filter(age > 24 & age < 48) %>% 
   filter(north == 0)%>%
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
 #if we do the same, but remove the outliers defined as observations with a z value higher than 3
 
-nat_stunting_rate_1988_out <- nutri %>%
+nat_stunting_rate_1988_out <- nutri_clean1 %>%
   filter(year == 1988) %>% 
   filter(age >= 24 & age <= 48) %>% 
   filter(zscore >= -3 & zscore <= 3) %>%  
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count) * 100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
 
-nat_stunting_rate_1993_out <- nutri %>%
+nat_stunting_rate_1993_out <- nutri_clean1 %>%
   filter(year == 1993) %>% 
   filter(age >= 24 & age <= 48) %>% 
   filter(zscore >= -3 & zscore <= 3) %>%  
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
-nat_stunting_rate_2008_out <- nutri %>%
+nat_stunting_rate_2008_out <- nutri_clean1 %>%
   filter(year == 2008) %>% 
   filter(age >= 24 & age <= 48) %>% 
   filter(zscore >= -3 & zscore <= 3) %>%  
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
 #northern region#
 
 
-north_stunting_rate_1988_out <- nutri %>%
+north_stunting_rate_1988_out <- nutri_clean1 %>%
   filter(year == 1988) %>% 
   filter(age >= 24 & age <= 48) %>% 
   filter(north == 1)%>%
   filter(zscore >= -3 & zscore <= 3) %>%  
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
-north_stunting_rate_1993_out <- nutri %>%
+north_stunting_rate_1993_out <- nutri_clean1 %>%
   filter(year == 1993) %>% 
   filter(age >= 24 & age <= 48) %>% 
   filter(north == 1)%>%
   filter(zscore >= -3 & zscore <= 3) %>%  
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
-north_stunting_rate_2008_out <- nutri %>%
+north_stunting_rate_2008_out <- nutri_clean1 %>%
   filter(year == 2008) %>% 
   filter(age >= 24 & age <= 48) %>% 
   filter(north == 1)%>%
   filter(zscore >= -3 & zscore <= 3) %>%  
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
 #southern region
 
-south_stunting_rate_1988_out <- nutri %>%
+south_stunting_rate_1988_out <- nutri_clean1 %>%
   filter(year == 1988) %>% 
   filter(age >= 24 & age <= 48) %>% 
   filter(north == 0)%>%
   filter(zscore >= -3 & zscore <= 3) %>%  
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
-south_stunting_rate_1993_out <- nutri %>%
+south_stunting_rate_1993_out <- nutri_clean1 %>%
   filter(year == 1993) %>% 
   filter(age >= 24 & age <= 48) %>% 
   filter(north == 0)%>%
   filter(zscore >= -3 & zscore <= 3) %>%  
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)      
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
-south_stunting_rate_2008_out <- nutri %>%
+south_stunting_rate_2008_out <- nutri_clean1 %>%
   filter(year == 2008) %>% 
   filter(age >= 24 & age <= 48) %>% 
   filter(north == 0)%>%
   filter(zscore >= -3 & zscore <= 3) %>%  
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
 # creating a table
@@ -240,78 +207,76 @@ stunting_rates <- data.frame(
 
 kable(stunting_rates, caption = "Table 1. Stunting Rates by Region and Year")
 
+
+
 ```
+
 
 
 ```{r, echo=FALSE}
 
+
+
+nutri_clean <- nutri[!is.na(nutri$zscore), ]
+nutri_clean <- nutri_clean[!is.na(nutri_clean$pweight), ]
+nutri_clean$dummy_zscore <- ifelse(nutri_clean$zscore <= -2, 1, 0)
+
+
 #boys without outliers
 
-nat_stunting_rate_1988_boys <- nutri %>%
+nat_stunting_rate_1988_boys <- nutri_clean %>%
   filter(year == 1988) %>% 
   filter(age >= 24 & age <= 48) %>% 
   filter(zscore >= -3 & zscore <= 3) %>%  
   filter(sexe == 1) %>%  
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count) * 100, 2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
 
-nat_stunting_rate_1993_boys <- nutri %>%
+nat_stunting_rate_1993_boys <- nutri_clean %>%
   filter(year == 1993) %>% 
   filter(age > 24 & age < 48) %>% 
   filter(zscore >= -3 & zscore <= 3) %>% 
   filter(sexe == 1) %>% 
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
-nat_stunting_rate_2008_boys <- nutri %>%
+nat_stunting_rate_2008_boys <- nutri_clean %>%
   filter(year == 2008) %>% 
   filter(age >= 24 & age <= 48) %>% 
   filter(zscore >= -3 & zscore <= 3) %>% 
   filter(sexe == 1) %>% 
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
 #boys with outliers
 
-nat_stunting_rate_1988_boys_tot <- nutri %>%
+nat_stunting_rate_1988_boys_tot <- nutri_clean %>%
   filter(year == 1988) %>% 
   filter(age >= 24 & age <= 48) %>% 
   filter(sexe == 1) %>%  
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count) * 100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
 
-nat_stunting_rate_1993_boys_tot <- nutri %>%
+nat_stunting_rate_1993_boys_tot <- nutri_clean %>%
   filter(year == 1993) %>% 
   filter(age > 24 & age < 48) %>% 
   filter(sexe == 1) %>% 
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
-nat_stunting_rate_2008_boys_tot <- nutri %>%
+nat_stunting_rate_2008_boys_tot <- nutri_clean %>%
   filter(year == 2008) %>% 
   filter(age >= 24 & age <= 48) %>% 
   filter(sexe == 1) %>% 
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
 
@@ -322,71 +287,59 @@ nat_stunting_rate_2008_boys_tot <- nutri %>%
 
 #girls without outliers
 
-nat_stunting_rate_1988_girls <- nutri %>%
+nat_stunting_rate_1988_girls <- nutri_clean %>%
   filter(year == 1988) %>% 
   filter(age >= 24 & age <= 48) %>% 
   filter(zscore >= -3 & zscore <= 3) %>%  
   filter(sexe == 0) %>%  
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count) * 100,2)      
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
 
-nat_stunting_rate_1993_girls <- nutri %>%
+nat_stunting_rate_1993_girls <- nutri_clean %>%
   filter(year == 1993) %>% 
   filter(age > 24 & age < 48) %>% 
   filter(zscore >= -3 & zscore <= 3) %>% 
   filter(sexe == 0) %>% 
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
-nat_stunting_rate_2008_girls <- nutri %>%
+nat_stunting_rate_2008_girls <- nutri_clean %>%
   filter(year == 2008) %>% 
   filter(age >= 24 & age <= 48) %>% 
   filter(zscore >= -3 & zscore <= 3) %>% 
   filter(sexe == 0) %>% 
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
 #girls with outliers
 
-nat_stunting_rate_1988_girls_tot <- nutri %>%
+nat_stunting_rate_1988_girls_tot <- nutri_clean %>%
   filter(year == 1988) %>% 
   filter(age >= 24 & age <= 48) %>% 
   filter(sexe == 0) %>%  
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count) * 100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
 
-nat_stunting_rate_1993_girls_tot <- nutri %>%
+nat_stunting_rate_1993_girls_tot <- nutri_clean %>%
   filter(year == 1993) %>% 
   filter(age > 24 & age < 48) %>% 
   filter(sexe == 0) %>% 
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)       
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
-nat_stunting_rate_2008_girls_tot <- nutri %>%
+nat_stunting_rate_2008_girls_tot <- nutri_clean %>%
   filter(year == 2008) %>% 
   filter(age >= 24 & age <= 48) %>% 
   filter(sexe == 0) %>% 
   summarise(
-    stunted_count = sum(zscore <= -2, na.rm = TRUE),  
-    total_count = sum(!is.na(zscore)),                
-    stunting_rate = round((stunted_count / total_count)*100,2)      
+    stunting_rate = round(sum(dummy_zscore*pweight)/sum(pweight)* 100, 2)       
   )
 
 
