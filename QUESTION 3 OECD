@@ -1,0 +1,35 @@
+```{r, echo=FALSE}
+
+
+cat("\f")
+rm(list = ls())
+
+library(tidyverse)
+library(haven)
+library(readxl)
+library(kableExtra)
+
+# Load data
+data <- read_excel("final.xlsx")
+
+data$Population_100_million <- data$`Population, total`/100000000
+
+# Fit model
+model2 <- lm(data = data, log(People + 1) ~ is_french_colony + Population_100_million + as.factor(Year))
+
+
+model_summary <- summary(model2)
+coefficients_rounded <- round(model_summary$coefficients, 2)
+
+
+colnames(coefficients_rounded)[which(colnames(coefficients_rounded) == "Pr(>|t|)")] <- "p-value"
+
+
+# Create regression table using kableExtra
+kable(coefficients_rounded, caption = "Determinants of the Number of Immigrants in France by Country") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F) %>%
+  add_header_above(c(" " = 1, "Coefficients" = 4)) %>%
+  footnote(general = "Source: OECD and World Bank, from 2015 until 2019. Coverage: all countries except for the EU countries. Units: Population in 100 millions")
+
+
+```
