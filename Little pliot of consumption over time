@@ -1,0 +1,6 @@
+nutri %>%
+  ggplot(aes(x = factor(year), y = conspc88, fill = factor(year))) + 
+  geom_boxplot() +
+  labs(x = "Year", y = "Consumption per Capita", fill = "Year") +
+  theme_minimal() +
+    stat_summary(fun.y=mean, geom="point", shape=5, size=4)
