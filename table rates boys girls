@@ -1,0 +1,13 @@
+models_rates <- huxreg("Boys M1" = rateb1,
+                  "Boys M2" = rateb2, 
+                  "Girls M1" = rateg1, 
+                  "Girls M2" = rateg2,
+                  error_format = "({std.error})",
+                  error_pos = "below",
+                  statistics = c(N = "nobs"),
+                  note = "{stars}",
+                  align = "center") %>%
+  set_caption("Average child deaths in Ivory Coast")
+set_latex_float(models_rates, value = "H")
+
+rateb1 etc are the lm models 
