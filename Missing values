@@ -61,3 +61,7 @@ predictors <- set_font_size(predictors, 8) %>%
 
 set_caption(predictors, "Regression of height and weight over variables of
             the dataframe")
+
+newnutri<-nutri%>%
+  mutate(height=ifelse(is.na(height)==T, 0.952*medheight, height), 
+         weightkg=ifelse(is.na(weightkg)==T, 50.467-0.330*hhsize+0.456*age+10.388*education-0.388*medheight, weightkg))
