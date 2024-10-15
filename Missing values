@@ -1,0 +1,22 @@
+missingvalues<- sapply(nutri, function(x){
+if (is.character(x)) {
+sum(is.na(x) | x == "")
+} else {
+sum(is.na(x))
+}
+})
+
+sum(is.na(nutri))
+
+missing_df<-as.data.frame(missingvalues)
+
+missing_df %>%
+  filter(missingvalues != 0) %>%
+  mutate(share = round(missingvalues / nrow(nutri), 3)) %>%
+  select(share) %>%
+  kable(caption = "Share of missing values per variable",
+    col.names = c("Variables", "Share of Missing Values")) %>%
+  kable_styling(full_width = FALSE, position = "center") %>%
+  column_spec(1, bold = TRUE, border_right = TRUE) %>%
+  column_spec(2, border_left = TRUE) %>%
+  row_spec(0, bold = TRUE)
