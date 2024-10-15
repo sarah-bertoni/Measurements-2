@@ -20,3 +20,44 @@ missing_df %>%
   column_spec(1, bold = TRUE, border_right = TRUE) %>%
   column_spec(2, border_left = TRUE) %>%
   row_spec(0, bold = TRUE)
+
+dummies<-nutri%>%
+  select(height, weightkg)%>%
+  mutate(dummyheight=ifelse(is.na(height),1,0),
+         dummyweightkg=ifelse(is.na(weightkg),1,0))
+
+regindep<-huxreg(lm(nutri$conspc88~dummies$dummyheight), lm(nutri$conspc88~dummies$dummyweightkg), 
+       statistics=character(0), 
+       coefs=c(
+         "Intercept"="(Intercept)",
+         "Presence of missing value in height"="dummies$dummyheight", 
+         "Presence of missing value in weight"="dummies$dummyweightkg"))
+
+set_caption(regindep,"Regression of expenditures per capita on the
+            presence of missing values in height and weight")
+
+
+predictors<-huxreg("Height"= lm(nutri$height ~ nutri$hhid + nutri$hhsize + nutri$north 
+                         + nutri$age + nutri$sexe + nutri$education + 
+                           nutri$medheight + nutri$conspc88, data=nutri), 
+        "Weight"= lm(nutri$weightkg ~ nutri$hhid + nutri$hhsize + 
+                           nutri$north + nutri$age + nutri$sexe + 
+                           nutri$education + nutri$medheight + 
+                           nutri$conspc88, data=nutri), 
+       statistics=character(0), 
+       coefs=c(
+         "Intercept"="(Intercept)",
+         "Household ID"="nutri$hhid", 
+         "Household size" = "nutri$hhsize", 
+         "Living in the North"="nutri$north", 
+         "Age of child (in months)"="nutri$age", 
+         "Child is a male"="nutri$sexe", 
+         "Highest grade completed"="nutri$education", 
+         "Median of height according to WHO"="nutri$medheight", 
+         "Expenditure per capita in the household"="nutri$conspc88"))
+
+predictors <- set_font_size(predictors, 8) %>%
+  set_bold(1, everywhere)
+
+set_caption(predictors, "Regression of height and weight over variables of
+            the dataframe")
